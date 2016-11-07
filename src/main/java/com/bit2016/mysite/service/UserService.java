@@ -16,7 +16,8 @@ public class UserService {
 	}
 	
 	public UserVo login(String email, String password) {
-		UserVo userVo = userDao.get(email, password);
+		UserVo userVo = null;;		// local 변수 초기화
+		userVo = userDao.get(email, password);
 		return userVo;
 	}
 	

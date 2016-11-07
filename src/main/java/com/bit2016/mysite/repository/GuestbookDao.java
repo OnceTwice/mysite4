@@ -1,20 +1,19 @@
 package com.bit2016.mysite.repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
+import org.apache.ibatis.session.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import com.bit2016.mysite.vo.GuestbookVo;
+import com.bit2016.mysite.vo.*;
 
 @Repository
 public class GuestbookDao {
+	
+	@Autowired
+	private SqlSession sqlSession;
 
 	private Connection getConnection() throws SQLException {
 		Connection conn = null;
@@ -164,57 +163,7 @@ public class GuestbookDao {
 	}
 	
 	public List<GuestbookVo> getList() {
-		List<GuestbookVo> list = new ArrayList<GuestbookVo>();
-
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try {
-			conn = getConnection();
-			
-			stmt = conn.createStatement();
-			
-			String sql =
-				"   select no, name, content, password, to_char(reg_date, 'yyyy-mm-dd hh:mi:ss' )" +
-				"     from guestbook" +
-				" order by reg_date desc";
-			rs = stmt.executeQuery(sql);
-			
-			while( rs.next() ) {
-				Long no = rs.getLong(1);
-				String name = rs.getString(2);
-				String content = rs.getString(3);
-				String password = rs.getString(4);
-				String regDate = rs.getString(5);
-				
-				GuestbookVo vo = new GuestbookVo();
-				vo.setNo(no);
-				vo.setName(name);
-				vo.setContent(content);
-				vo.setPassword(password);
-				vo.setRegDate(regDate);
-				
-				list.add( vo );
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if( rs != null ) {
-					rs.close();
-				}
-				if( stmt != null ) {
-					stmt.close();
-				}
-				if( conn != null ) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				System.out.println("error:" + e);
-			}
-		}
-
+		List<GuestbookVo> list =  sqlSession.selectList("guestbook.getList");
 		return list;
 	}
 	
