@@ -30,9 +30,7 @@ public class GuestbookController {
 	
 	@RequestMapping("/delete")
 	public String delete(@ModelAttribute GuestbookVo vo) {
-		System.out.println("전 : " + vo);
 		guestbookService.delete(vo);
-		System.out.println("후 : " + vo);
 		
 		return "redirect:/guestbook/";
 	}

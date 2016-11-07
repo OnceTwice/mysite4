@@ -71,7 +71,6 @@ public class GuestbookDao {
 	}
 	
 	public void delete(GuestbookVo vo) {
-		System.out.println("다오다오"+vo);
 		sqlSession.delete("guestbook.delete", vo);
 	}
 	
