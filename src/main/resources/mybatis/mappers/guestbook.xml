@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="guestbook">
+
+	<insert id="insert" parameterType="com.bit2016.mysite.vo.GuestbookVo">
+		<![CDATA[
+			insert
+			into guestbook
+			values (guestbook_seq.nextval, #{name}, #{password}, #{content}, sysdate)
+		]]>
+	</insert>
+	
+	<delete id="delete" parameterType="guestbookvo">
+		<![CDATA[
+			delete
+			from guestbook
+			where no=#{no } and password=#{password }
+		]]>
+	</delete>
+
 	<select id="getList" resultType="guestbookvo">
 		<![CDATA[
 			select no, name, content, password,

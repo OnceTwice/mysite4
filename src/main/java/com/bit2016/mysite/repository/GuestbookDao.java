@@ -3,6 +3,8 @@ package com.bit2016.mysite.repository;
 import java.sql.*;
 import java.util.*;
 
+import javax.sql.*;
+
 import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -15,17 +17,8 @@ public class GuestbookDao {
 	@Autowired
 	private SqlSession sqlSession;
 
-	private Connection getConnection() throws SQLException {
-		Connection conn = null;
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-			conn = DriverManager.getConnection(url, "webdb", "webdb");
-		} catch (ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패 :" + e);
-		}
-		return conn;
-	}
+	@Autowired
+	private DataSource datasource;
 	
 	public GuestbookVo get(Long guestbookNo) {
 		GuestbookVo vo = null;
@@ -35,7 +28,7 @@ public class GuestbookDao {
 		ResultSet rs = null;
 		
 		try {
-			conn = getConnection();
+			conn = datasource.getConnection();
 			
 			String sql = "select no, name, content, password " + 
 						 "from guestbook " +
@@ -78,88 +71,12 @@ public class GuestbookDao {
 	}
 	
 	public void delete(GuestbookVo vo) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		
-		try {
-			conn = getConnection();
-			
-			String sql =
-				" delete" +
-				"   from guestbook" +
-				"  where no = ?" +
-				"    and password = ?";
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setLong( 1, vo.getNo() );
-			pstmt.setString( 2, vo.getPassword() );
-			
-			pstmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if( pstmt != null ) {
-					pstmt.close();
-				}
-				if( conn != null ) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				System.out.println("error:" + e);
-			}
-		}
+		System.out.println("다오다오"+vo);
+		sqlSession.delete("guestbook.delete", vo);
 	}
 	
-	public Long insert(GuestbookVo vo ) {
-		Long no = null;
-		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try {
-			conn = getConnection();
-			
-			String sql =
-				" insert" +
-				"   into guestbook" +
-				" values (guestbook_seq.nextval, ?, ?, ?, sysdate)";
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setString( 1, vo.getName() );
-			pstmt.setString( 2, vo.getContent() );
-			pstmt.setString( 3, vo.getPassword() );
-			
-			pstmt.executeUpdate();
-			
-			// primary key(guestbook_seq.currval) 받아오기
-			stmt = conn.createStatement();
-			
-			sql = "select guestbook_seq.currval from daul";
-			rs = stmt.executeQuery(sql);
-			
-			if(rs.next()) {
-				no = rs.getLong(1);
-			}
-			
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if( pstmt != null ) {
-					pstmt.close();
-				}
-				if( conn != null ) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				System.out.println("error:" + e);
-			}
-		}
-		return no;
+	public void insert(GuestbookVo vo ) {
+		sqlSession.insert("guestbook.insert", vo);
 	}
 	
 	public List<GuestbookVo> getList() {
@@ -175,7 +92,7 @@ public class GuestbookDao {
 		ResultSet rs = null;
 		
 		try {
-			conn = getConnection();
+			conn = datasource.getConnection();
 			
 			String sql =	" select *" +
 							"  from (select a.*, rownum rn" +
