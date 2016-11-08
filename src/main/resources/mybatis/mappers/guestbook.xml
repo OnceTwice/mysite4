@@ -2,12 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="guestbook">
+	
+	<select id="getByNo">
+		<![CDATA[
+			select no, name, content, password, to_char(reg_date, 'yyyy-mm-dd hh:mi:ss' ) as regDate
+			from guestbook
+			where no = #{no}
+		]]>
+	</select>
 
 	<insert id="insert" parameterType="com.bit2016.mysite.vo.GuestbookVo">
+		<selectKey keyProperty="no" resultType="long" order="BEFORE">
+			select guestbook_seq.nextval from dual
+		</selectKey>
 		<![CDATA[
 			insert
 			into guestbook
-			values (guestbook_seq.nextval, #{name}, #{password}, #{content}, sysdate)
+			values (#{no}, #{name}, #{password}, #{content}, sysdate)
 		]]>
 	</insert>
 	
@@ -21,10 +32,20 @@
 
 	<select id="getList" resultType="guestbookvo">
 		<![CDATA[
-			select no, name, content, password,
-				   to_char(reg_date, 'yyyy-mm-dd hh:mi:ss' ) as regDate
+			select no, name, content, password, to_char(reg_date, 'yyyy-mm-dd hh:mi:ss' ) as regDate
 			from guestbook
 			order by reg_date desc
+		]]>
+	</select>
+	
+	<select id="getListByPage" parameterType="integer" resultType="guestbookvo">
+		<![CDATA[
+			select *
+			from (select a.*, rownum rn
+				  from ( select no,	name, content, password, to_char(reg_date, 'yyyy-mm-dd hh:mi:ss' ) as regDate
+						 from guestbook
+						 order by reg_date desc ) a )
+			where (#{page}-1)*5+1 <= rn and rn <= #{page}*5
 		]]>
 	</select>
 </mapper>

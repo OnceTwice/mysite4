@@ -10,4 +10,11 @@ public class MainController {
 	public String index() {
 		return "main/index";
 	}
+	
+	@ResponseBody
+	@RequestMapping("/hello")
+	public String hello() {
+		System.out.println("!!!!!");
+		return "안녕 jRevel";
+	}
 }

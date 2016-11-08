@@ -5,21 +5,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>mysite</title>
+	<title>방명록(ajax)</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
-	<script
-		type="text/javascript"
-		src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
+	<!-- 
+	
+	 -->
+	<script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script type="text/javascript">
 		var isEnd = false;
 		var page = 0;
-		var render = function( vo ) {
-			// 
+		
+		// var messageBox
+		
+		var render = function( vo, mode ) {
 			// 현업에서는 이 부분을 template library ex) ejs
-			// 
 			var htmls =
 				"<li id='gb-" + vo.no + "'>" +
 					"<strong>" + vo.name + "</strong>" +
@@ -28,7 +30,12 @@
 					"<a href=''>삭제</a>" +
 				"</li>"; // js template library -> ejs
 				
-				$( "#list-guestbook" ).append( htmls );
+				if (mode == true) {
+					$( "#list-guestbook" ).prepend( htmls );
+				} else {
+					$( "#list-guestbook" ).append( htmls );
+				}
+			console.log(vo);
 		}
 		
 		var fetchList = function() {
@@ -37,7 +44,7 @@
 			}
 			++page;
 			$.ajax({
-				url: "${pageContext.request.contextPath }/api/guestbook?a=ajax-list&p=" + page,
+				url: "${pageContext.request.contextPath }/guestbook/api/list?p=" + page,
 				type: "get",
 				dataType: "json",
 				data:"",
@@ -48,10 +55,10 @@
 						isEnd = true;
 						return;
 					}
-					
+				
 					// redering
 					$( response.data ).each( function(index, vo){
-						render( vo );
+						render( vo, false);
 					});
 					
 					if( response.data.length < 5 ) {
@@ -65,9 +72,7 @@
 			});
 		}
 		
-		function deleteLetter() {
-			
-		}
+		// 삭제
 		
 		$(function(){
 			// 삭제 버튼 click event(live event)

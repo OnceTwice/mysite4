@@ -6,9 +6,9 @@
 <!doctype html>
 <html>
 <head>
-<title>mysite</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
+	<title>mysite</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div id="container">
@@ -17,7 +17,7 @@
 			<div id="guestbook">
 				<h1>방명록</h1>
 				
-				<form action="${pageContext.request.contextPath }/guestbook/insert" method="post">
+				<form action="${pageContext.request.contextPath }/guestbook/add" method="post">
 					<input type="text" name="name" placeholder="이름">
 					<input type="password" name="password" placeholder="비밀번호">
 					<textarea name="content" placeholder="내용을 입력해 주세요."></textarea>

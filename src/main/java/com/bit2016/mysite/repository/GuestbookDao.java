@@ -20,67 +20,21 @@ public class GuestbookDao {
 	@Autowired
 	private DataSource datasource;
 	
-	public GuestbookVo get(Long guestbookNo) {
-		GuestbookVo vo = null;
-		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		try {
-			conn = datasource.getConnection();
-			
-			String sql = "select no, name, content, password " + 
-						 "from guestbook " +
-						 " where no = ?";
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setLong( 1, guestbookNo );
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				long no = rs.getLong(1);
-				String name = rs.getString(2);
-				String content = rs.getString(3);
-				String password = rs.getString(4);
-				
-				vo = new GuestbookVo();
-				vo.setNo(no);
-				vo.setName(name);
-				vo.setContent(content);
-				vo.setPassword(password);
-			}
-		} catch (SQLException e) {
-			System.out.println( "error:" + e );
-		} finally {
-			try {
-				if( rs != null ) {
-					rs.close();
-				}
-				if( pstmt != null ) {
-					pstmt.close();
-				}
-				if( conn != null ) {
-					conn.close();
-				}
-			} catch ( SQLException e ) {
-				System.out.println( "error:" + e );
-			} 
-		}
-		return vo;
-	}
-	
-	public void delete(GuestbookVo vo) {
-		sqlSession.delete("guestbook.delete", vo);
-	}
-	
-	public void insert(GuestbookVo vo ) {
+	public Long insert(GuestbookVo vo ) {
 		sqlSession.insert("guestbook.insert", vo);
+		return vo.getNo();
+	}
+	
+	public int delete(GuestbookVo vo) {
+		return sqlSession.delete("guestbook.delete", vo);
+	}
+	
+	public GuestbookVo get(Long no) {
+		return sqlSession.selectOne("guestbook.getByNo", no);
 	}
 	
 	public List<GuestbookVo> getList() {
-		List<GuestbookVo> list =  sqlSession.selectList("guestbook.getList");
-		return list;
+		return sqlSession.selectList("guestbook.getList");
 	}
 	
 	public List<GuestbookVo> getList( int page ) {

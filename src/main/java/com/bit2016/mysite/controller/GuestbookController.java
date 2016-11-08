@@ -1,5 +1,7 @@
 package com.bit2016.mysite.controller;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
@@ -11,33 +13,40 @@ import com.bit2016.mysite.vo.*;
 @Controller
 @RequestMapping("/guestbook")
 public class GuestbookController {
+	
 	@Autowired
 	private GuestbookService guestbookService;
 	
-	@RequestMapping(value="/insert", method=RequestMethod.POST)
+	@RequestMapping(value="/add", method=RequestMethod.POST)
 	public String add(@ModelAttribute GuestbookVo vo) {
-		guestbookService.insert(vo);
+		guestbookService.writeMessage(vo, false);
 		
 		return "redirect:/guestbook";
 	}
 	
 	@RequestMapping("/deleteform/{no}")
-	public String deleteform(@PathVariable("no") int no, Model model) {
+	public String deleteform(@PathVariable("no") Long no, Model model) {
 		model.addAttribute("no", no);
 		
-		return "/guestbook/deleteform";
+		return "guestbook/deleteform";
 	}
 	
-	@RequestMapping("/delete")
+	@RequestMapping(value="/delete", method=RequestMethod.POST)
 	public String delete(@ModelAttribute GuestbookVo vo) {
-		guestbookService.delete(vo);
+		guestbookService.deleteMessage(vo);
 		
-		return "redirect:/guestbook/";
+		return "redirect:/guestbook";
 	}
 	
 	@RequestMapping("")
 	public String list(Model model) {
-		model.addAttribute("list", guestbookService.list());
-		return "/guestbook/list";
+		List<GuestbookVo> list = guestbookService.getMessageList();
+		model.addAttribute("list", list);
+		return "guestbook/index";
+	}
+	
+	@RequestMapping("/ajax")
+	public String ajax() {
+		return "guestbook/index-ajax";
 	}
 }

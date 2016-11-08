@@ -66,7 +66,7 @@
 					return;
 				}
 				$.ajax({
-					url:"/mysite4/api/user?a=chkemail&email=" + email,
+					url:"/mysite4/user/api/checkemail?email=" + email,
 					type: "get",
 					dataType: "json",
 					data: "",
