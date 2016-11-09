@@ -10,15 +10,27 @@
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
 	<!-- 
-	
-	 -->
-	<script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
+		
+	-->
+	<script type="text/javascript"	src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script type="text/javascript">
 		var isEnd = false;
 		var page = 0;
 		
-		// var messageBox
+		var messageBox = function(title, message, callback) {
+			$("#dialog-message").attr("title", title);
+			$("#dialog-message p").text(message);
+			$("#dialog-message").dialog({
+				modal : true,
+				buttons : {
+					Ok : function() {
+						$(this).dialog("close");
+					}
+				},
+				close : callback || function() {}
+			});
+		}
 		
 		var render = function( vo, mode ) {
 			// 현업에서는 이 부분을 template library ex) ejs
@@ -35,7 +47,6 @@
 				} else {
 					$( "#list-guestbook" ).append( htmls );
 				}
-			console.log(vo);
 		}
 		
 		var fetchList = function() {
@@ -75,7 +86,22 @@
 		// 삭제
 		
 		$(function(){
+			// 삭제 시 비밀번호 입력 다이얼로그
+			var dialogDelete = $("#dialog-delete-form").dialog({
+				
+			});
+			
+			
+			
+			// 삭제 버튼 click event (live event)
+			$(document).on("click", "#list-guestbook li a", function(event){
+				event.preventDefault();
+				
+				$("#hidden-no").val($(this).attr("data-no"));
+				dialogDelete.dialog("open");
+			});
 			// 삭제 버튼 click event(live event)
+			/*
 			$(document).on("click", "#list-guestbook li a", function(event){
 				event.preventDefault();
 				console.log("여기서 비밀번호를 입력받는 modal dialog를 띠웁니다.");
@@ -107,7 +133,6 @@
 						form[ 0 ].reset();
 				        allFields.removeClass( "ui-state-error" );
 			        }
-					
 				});
 				
 				$.ajax({
@@ -128,13 +153,31 @@
 						console.error(status + " : " + e);
 					}
 				});
-				
 			});
+			*/
 		
+			// 등록
 			$( "#add-form" ).submit( function( event ) {
 				event.preventDefault();
-				// ajax insert
+				// validation form
+				var name = $("#input-name").val();
+				if(name == "") {
+					return;
+				}
 				
+				var password = $("input-password").val();
+				if(password == "") {
+					return;
+				}
+				
+				var content = $("#tx-content").val();
+				if(content == "") {
+					return;
+				}
+				
+				$.ajax({
+					
+				});
 			});
 			
 			$(window).scroll( function(){			// 스크롤
@@ -143,7 +186,7 @@
 				var windowHeight = $window.height();
 				var documentHeight = $( document ).height();
 				
-				// 스크롤 바가 바닥까지 왔을 때( 20px 덜 왔을 때 )
+				// 스크롤 바가 바닥까지 왔을 때( 10px 덜 왔을 때 )
 				if( scrollTop + windowHeight + 10 > documentHeight ) {
 					//console.log( "call fetchList" );
 					fetchList();
@@ -170,35 +213,46 @@
 				<form id="add-form" action="" method="post">
 					<input type="text" name="name" placeholder="이름">
 					<input type="password" name="pass" placeholder="비밀번호">
-					<textarea name="content" placeholder="내용을 입력해 주세요."></textarea>
+					<textarea name="tx-content" placeholder="내용을 입력해 주세요."></textarea>
 					<input type="submit" value="보내기" />
 				</form>
-				<ul id="list-guestbook">
-				
-				</ul>
-				<!-- <button style="margin-top:20px;" id="btn-fetch">가져오기</button> 	-->
+				<ul id="list-guestbook"> </ul>
+			</div>
+			
+			<div id="dialog-delete-form" title="메시지 삭제" style="display:none">
+				<p>작성시 입력했던 비밀번호를 입력하세요</p>
+				<p>비밀번호가 틀립니다.</p>
+				<form>
+					<input id="password-delete" type="password" class="text ui-widget-content ui-corner-all">
+					<input id="hidden-no" type="hidden" value="">
+					<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+				</form>
+			</div>
+			
+			<div id="dialog-message" title="" style="display:none">
+				<p></p>
 			</div>
 		</div>
-		
+
+		<!-- 
+		<div id="dialog" title="방명록 삭제">
+			<p class="validateTips">비밀번호를 입력하세요</p>
+
+			<form>
+				<fieldset>
+					<label for="password">Password</label>
+					<input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
+
+					<input type="submit" tabindex="-1" style="position: absolute; top: -1000px">
+				</fieldset>
+			</form>
+		</div>
+		-->
+
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">
-			<c:param name="menu" value="guestbook-ajax"/>
+			<c:param name="menu" value="guestbook-ajax" />
 		</c:import>
 		<c:import url="/WEB-INF/views/includes/footer.jsp" />
 	</div>
-	
-	<div id="dialog" title="방명록 삭제">
- 		<p class="validateTips"> 비밀번호를 입력하세요 </p>
-
-	  <form>
-	    <fieldset>
-	     <label for="password">Password</label>
-	      <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
-	 
-	      <!-- Allow form submission with keyboard without duplicating the dialog button -->
-	      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-	    </fieldset>
-	  </form>
-	</div>
-	
 </body>
 </html>
