@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.bit2016.mysite.service.*;
 import com.bit2016.mysite.vo.*;
+import com.bit2016.security.*;
 
 @Controller
 @RequestMapping("/board")
@@ -35,6 +36,7 @@ public class BoardController {
 		return "board/write";
 	}
 	
+	@Auth()
 	@RequestMapping( value="/write", method=RequestMethod.POST )
 	public String write( HttpSession session, @ModelAttribute BoardVo vo ) {
 		UserVo authUser = (UserVo)session.getAttribute( "authUser" );

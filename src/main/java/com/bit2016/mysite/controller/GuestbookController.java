@@ -24,6 +24,7 @@ public class GuestbookController {
 		return "redirect:/guestbook";
 	}
 	
+	
 	@RequestMapping("/deleteform/{no}")
 	public String deleteform(@PathVariable("no") Long no, Model model) {
 		model.addAttribute("no", no);
