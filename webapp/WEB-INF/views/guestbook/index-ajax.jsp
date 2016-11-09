@@ -83,15 +83,55 @@
 			});
 		}
 		
-		// 삭제
-		
 		$(function(){
 			// 삭제 시 비밀번호 입력 다이얼로그
 			var dialogDelete = $("#dialog-delete-form").dialog({
-				
+				autoOpen: false,
+				modal:true,
+				buttons : {
+					"삭제" : function() {
+						var no = $("#hidden-no").val();
+						var password = $("#password-delete").val();
+						
+						console.log(no);	// 값을 못받아옴
+						console.log(password);
+						
+						$.ajax({		// 삭제 요청
+							url : "${pageContext.request.contextPath }/guestbook/api/delete?no=" + no + "&password=" + password,
+							type : "get",
+							dataType : "json",
+							data : "",
+							success : function(response) {
+								if(response.result != "success") {
+									console.error( response.message );
+									return;
+								}
+								if(response.data == -1) {	// 삭제 실패
+									$("#dialog-delete-form .validateTips.normal").hide();
+									$("#dialog-delete-form .validateTips.error").show();
+									$("#gb-").val("");
+									return;
+								}
+								// 삭제 성공
+								$(""+response.data).remove();
+								dialogDelete.dialog("close");
+							},
+							error : function(jqXHR, status, e) {
+								console.error(status + " : " + e);
+								dialogDelete.dialog("close");
+							}
+						});
+					},
+					"취소" : function() {
+						$(this).dialog("close");
+					}
+				},
+				close : function() {
+					$("#dialog-delete-form .validateTips.error").hide();
+					$("#dialog-delete-form .validateTips.normal").show();
+					$("#password-delete").val("");
+				}
 			});
-			
-			
 			
 			// 삭제 버튼 click event (live event)
 			$(document).on("click", "#list-guestbook li a", function(event){
@@ -100,61 +140,6 @@
 				$("#hidden-no").val($(this).attr("data-no"));
 				dialogDelete.dialog("open");
 			});
-			// 삭제 버튼 click event(live event)
-			/*
-			$(document).on("click", "#list-guestbook li a", function(event){
-				event.preventDefault();
-				console.log("여기서 비밀번호를 입력받는 modal dialog를 띠웁니다.");
-				
-				$( "#dialog" ).dialog();
-				
-				var no = $("no").val();
-				var password = $("password").val();
-				
-				if(password == "") {
-					return;
-				}
-				
-				dialog = $( "#dialog" ).dialog({
-					autoOpen: false,
-					height: 350,
-					width: 350,
-					modal: true,
-					buttons: {
-						"Okay": deleteLetter,
-						"Cancel" : function() {
-							dialog.dialog( "close" );
-						}
-					},
-					ok : function() {
-						console.log("2tqtqtq");
-					},
-					close : function() {
-						form[ 0 ].reset();
-				        allFields.removeClass( "ui-state-error" );
-			        }
-				});
-				
-				$.ajax({
-					url : "/api/guestbook?a=ajax-delete&no=" + no + "&password=" + password,
-					type : "get",
-					dataType : "json",
-					data : "",
-					success : function(response) {
-						console.log(response);
-						if(response.result == "fail") {
-							console.log(response.message);
-							return;
-						}
-						
-						// success
-					},
-					error : function(jqXHR, status, e) {
-						console.error(status + " : " + e);
-					}
-				});
-			});
-			*/
 		
 			// 등록
 			$( "#add-form" ).submit( function( event ) {
@@ -162,21 +147,52 @@
 				// validation form
 				var name = $("#input-name").val();
 				if(name == "") {
+					messageBox("메시지 입력", "이름은 필수 입력 항목입니다.", function() {
+						$("#input-name").focus();
+					});
 					return;
 				}
 				
-				var password = $("input-password").val();
+				var password = $("#input-password").val();
 				if(password == "") {
+					messageBox("메시지 입력", "비밀번호는 필수 입력 항목입니다.", function() {
+						$("#input-password").focus();
+					});
 					return;
 				}
 				
 				var content = $("#tx-content").val();
 				if(content == "") {
+					messageBox("메시지 입력", "내용이 비어있습니다.", function() {
+						$("#tx-content").focus();
+					})
 					return;
 				}
 				
+				console.log(name);		// undefined
+				console.log(password);
+				console.log(content);
+				
 				$.ajax({
-					
+					url : "${pageContext.request.contextPath }/guestbook/api/add",
+					type : "post",
+					dataType : "json",
+					data : "name="+name+"&password="+password+"&content="+content,
+					success : function(response) {
+						if(response.result != "success") {
+							console.error(response.message);
+							return;
+						}
+						
+						// rendering
+						render(response.data, true);
+						
+						// 폼지우기
+						$("#add-form")[0].reset();
+					},
+					error : function(jqXHR, status, e) {
+						console.error(status + " : " + e);
+					}
 				});
 			});
 			
@@ -220,8 +236,8 @@
 			</div>
 			
 			<div id="dialog-delete-form" title="메시지 삭제" style="display:none">
-				<p>작성시 입력했던 비밀번호를 입력하세요</p>
-				<p>비밀번호가 틀립니다.</p>
+				<p class="validateTips normal">작성시 입력했던 비밀번호를 입력하세요</p>
+				<p class="validateTips error" style="display:none">비밀번호가 틀립니다.</p>
 				<form>
 					<input id="password-delete" type="password" class="text ui-widget-content ui-corner-all">
 					<input id="hidden-no" type="hidden" value="">
