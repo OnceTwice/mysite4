@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert
 			into guestbook
-			values (#{no}, #{name}, #{password}, #{content}, sysdate)
+			values (#{no}, #{name}, #{content}, #{password}, sysdate)
 		]]>
 	</insert>
 	

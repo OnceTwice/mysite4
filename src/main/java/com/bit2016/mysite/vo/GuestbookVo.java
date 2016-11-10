@@ -43,6 +43,4 @@ public class GuestbookVo {
 		return "GuestbookVo [no=" + no + ", name=" + name + ", content=" + content + ", password=" + password
 				+ ", regDate=" + regDate + "]";
 	}
-	
-
 }

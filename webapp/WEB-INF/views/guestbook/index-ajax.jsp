@@ -9,9 +9,27 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link href="${pageContext.request.contextPath }/assets/css/guestbook.css" rel="stylesheet" type="text/css">
-	<!-- 
-		
-	-->
+	<style type="text/css">
+		#dialog-delete-form p {
+			padding:10px;
+			font-weight: bold;
+			font-size:1.0em
+		}
+		#dialog-delete-form input[type='password'] {
+			padding:5px;
+			border:2px solid #777777;
+			outline:none;
+			width:180px;
+		}
+		#dialog-delete-form .validateTips.error {
+			color:#f00;
+		}
+		#dialog-message p {
+			padding:20px 0;
+			font-weight: bold;
+			font-size:1.0em;	
+		}
+	</style>
 	<script type="text/javascript"	src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -34,12 +52,15 @@
 		
 		var render = function( vo, mode ) {
 			// 현업에서는 이 부분을 template library ex) ejs
+			// console.log(vo);		// table-sql문 확인
+			
 			var htmls =
 				"<li id='gb-" + vo.no + "'>" +
 					"<strong>" + vo.name + "</strong>" +
 					"<p>" + vo.content.replace(/\n/gi, "<br>") + "</p>" +
 					"<strong>" + vo.regDate + "</strong>" +
-					"<a href=''>삭제</a>" +
+					// "<a href=''>삭제</a>" +
+					"<a href='' data-no='" + vo.no +"'>삭제</a>" +
 				"</li>"; // js template library -> ejs
 				
 				if (mode == true) {
@@ -83,8 +104,7 @@
 			});
 		}
 		
-		$(function(){
-			// 삭제 시 비밀번호 입력 다이얼로그
+		$(function(){			// 삭제 시 비밀번호 입력 다이얼로그
 			var dialogDelete = $("#dialog-delete-form").dialog({
 				autoOpen: false,
 				modal:true,
@@ -93,8 +113,9 @@
 						var no = $("#hidden-no").val();
 						var password = $("#password-delete").val();
 						
-						console.log(no);	// 값을 못받아옴
-						console.log(password);
+						// 삭제 시 html로부터 값 받아오는지 확인
+						// console.log(no);
+						// console.log(password);
 						
 						$.ajax({		// 삭제 요청
 							url : "${pageContext.request.contextPath }/guestbook/api/delete?no=" + no + "&password=" + password,
@@ -113,7 +134,7 @@
 									return;
 								}
 								// 삭제 성공
-								$(""+response.data).remove();
+								$("#gb-" + response.data).remove();
 								dialogDelete.dialog("close");
 							},
 							error : function(jqXHR, status, e) {
@@ -169,15 +190,16 @@
 					return;
 				}
 				
-				console.log(name);		// undefined
-				console.log(password);
-				console.log(content);
+				// 입력 시 html로부터 값이 들어오는지 확인
+				// console.log("이름 : " + name);	
+				// console.log("비밀번호 : " + password);
+				// console.log("내용 : " + content);
 				
 				$.ajax({
 					url : "${pageContext.request.contextPath }/guestbook/api/add",
 					type : "post",
 					dataType : "json",
-					data : "name="+name+"&password="+password+"&content="+content,
+					data : "name="+name + "&password="+password + "&content="+content,
 					success : function(response) {
 						if(response.result != "success") {
 							console.error(response.message);
@@ -209,12 +231,6 @@
 				}
 			});
 			
-			/*
-			$( "#btn-fetch" ).click( function(){
-				fetchList();
-			});
-			*/
-			
 			// 1번째 리스트 가져오기
 			fetchList();
 		});
@@ -224,12 +240,13 @@
 	<div id="container">
 		<c:import url="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
+		
 			<div id="guestbook">
 				<h1>방명록</h1>
 				<form id="add-form" action="" method="post">
-					<input type="text" name="name" placeholder="이름">
-					<input type="password" name="pass" placeholder="비밀번호">
-					<textarea name="tx-content" placeholder="내용을 입력해 주세요."></textarea>
+					<input id="input-name" 		type="text"		 name="name" placeholder="이름">
+					<input id="input-password"  type="password"  name="pass" placeholder="비밀번호">
+					<textarea id="tx-content" name="tx-content" placeholder="내용을 입력해 주세요."></textarea>
 					<input type="submit" value="보내기" />
 				</form>
 				<ul id="list-guestbook"> </ul>
@@ -249,21 +266,6 @@
 				<p></p>
 			</div>
 		</div>
-
-		<!-- 
-		<div id="dialog" title="방명록 삭제">
-			<p class="validateTips">비밀번호를 입력하세요</p>
-
-			<form>
-				<fieldset>
-					<label for="password">Password</label>
-					<input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
-
-					<input type="submit" tabindex="-1" style="position: absolute; top: -1000px">
-				</fieldset>
-			</form>
-		</div>
-		-->
 
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">
 			<c:param name="menu" value="guestbook-ajax" />
