@@ -1,11 +1,10 @@
 package com.bit2016.mysite.controller.api;
 
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 
+import com.bit2016.dto.*;
 import com.bit2016.mysite.service.*;
 
 @Controller("userAPIController")
@@ -17,18 +16,10 @@ public class UserController {
 	
 	@ResponseBody
 	@RequestMapping("/checkemail")
-	public Map<String, Object> checkEmail(@RequestParam(value="email", required=true, defaultValue="") String email) {
+	public JSONResult checkEmail(@RequestParam(value="email", required=true, defaultValue="") String email) {
+		SingletonClass sc = SingletonClass.getInstance();
 		boolean result = userService.emailExists(email);
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("result", "success");
-		
-		if(result) {
-			map.put("data", "exist");
-		} else {
-			map.put("data", "not exist");
-		}
-		
-		return map;
+		return JSONResult.success(result ? "exist" : "not exist");
 	}
 }

@@ -1,32 +1,28 @@
 package com.bit2016.mysite.exception;
 
+import java.io.*;
+
 import javax.servlet.http.*;
 
+import org.apache.commons.logging.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
-
+	
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	
-//	@ExceptionHandler(Exception.class)
-//	public String handlerException(HttpServletRequest request, Exception e) {
-//		System.out.println("exception : " + e);
-//		return "error/exception";
-//	}
+	private static final Log log = LogFactory.getLog(GlobalExceptionHandler.class);
 	
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handlerException(HttpServletRequest request, Exception e) {
 		// 1. 로깅
-		System.out.println("exception : " + e);
+		StringWriter errors = new StringWriter();
+		e.printStackTrace(new PrintWriter(errors));
+		log.error(errors.toString());
 		
-		
-		// 2. ajax 요청 요부 판단
-//		if("application/json".equals(request.getContentType())) {
-//			
-//		}
-		
+		// 2. 시스템 오류 화면 안내
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("exceptionMessage", e.getMessage());
+		// mav.addObject("exceptionMessage", e.getMessage());
 		mav.setViewName("error/exception");
 		return mav;
 	}
