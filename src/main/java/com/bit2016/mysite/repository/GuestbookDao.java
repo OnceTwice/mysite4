@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.util.*;
 
 import com.bit2016.mysite.vo.*;
 
@@ -28,6 +29,11 @@ public class GuestbookDao {
 	}
 	
 	public List<GuestbookVo> getList() {
+//		StopWatch stopWatch = new StopWatch();
+//		stopWatch.start();
+//		List<GuestbookVo> list = sqlSession.selectList("guestbook.getList");
+//		stopWatch.stop();
+//		System.out.println("[ExecutionTime][GuestbookDao.getList] : " + stopWatch.getTotalTimeSeconds() + "millis");
 		return sqlSession.selectList("guestbook.getList");
 	}
 	

@@ -8,9 +8,12 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	xmlns:mvc="http://www.springframework.org/schema/mvc">
 
+	<!-- auto poxy -->
+	<aop:aspectj-autoproxy />
+	
 	<!-- validator, conversionService, messageConverter를 자동으로 등록 -->
 	<mvc:annotation-driven>
-	<!-- Message Converters -->
+		<!-- Message Converters -->
 		<mvc:message-converters>
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
 				<property name="supportedMediaTypes">
@@ -88,5 +91,15 @@
  
 		
 	</mvc:interceptors>
+	
+	 <!-- 6. MessageSource -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	   <property name="defaultEncoding" value="utf-8"/>
+	   <property name="basenames" >
+	      <list>
+		<value>messages/messages_ko</value>
+	      </list>
+	   </property>
+	</bean>
 
 </beans>

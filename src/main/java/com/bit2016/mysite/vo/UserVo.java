@@ -1,10 +1,25 @@
 package com.bit2016.mysite.vo;
 
+import javax.validation.constraints.*;
+
+import org.hibernate.validator.constraints.*;
+
 public class UserVo {
 	private Long no;
+	
+	@NotEmpty
+	@Length(min=2, max=5)
 	private String name;
+	
+	@NotEmpty
+	@Email
+//	@Pattern(regexp="[0-9a-zA-Z]([-_\\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\\.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$/i")
 	private String email;
+	
+	@NotEmpty
+	@Pattern(regexp="^[0-9]+$")
 	private String password;
+	
 	private String gender;
 	
 	public Long getNo() {
