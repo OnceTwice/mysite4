@@ -37,7 +37,9 @@ public class GuestbookService {
 	
 	public GuestbookVo writeMessage(GuestbookVo vo, boolean fetch) {
 		GuestbookVo guestbookVo = null;
+		
 		Long no = guestbookDao.insert(vo);
+		
 		if(fetch) {
 			guestbookVo = guestbookDao.get(no);
 		}

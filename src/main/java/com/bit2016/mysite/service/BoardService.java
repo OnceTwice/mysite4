@@ -17,11 +17,39 @@ public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
 	
-	public void write( BoardVo vo ) {
-		boardDao.insert( vo );
+	public boolean deleteMessage(BoardVo boardVo) {
+		return boardDao.delete(boardVo) == 1;
 	}
 	
-	public Map<String, Object> getList( int currentPage, String keyword ){
+	public BoardVo getMessage(Long no) {
+		BoardVo boardVo = boardDao.get(no);
+		
+		if(boardVo != null) {
+			boardDao.updateHit(no);
+		}
+		return boardVo;
+	}
+	
+	public boolean writeMessage( BoardVo boardVo ) {
+		Integer groupNo = boardVo.getGroupNo();
+		
+		if(groupNo != null) {
+			Integer orderNo = boardVo.getOrderNo();
+			Integer depth = boardVo.getDepth();
+			
+			boardDao.increaseGroupOrder(groupNo, orderNo);
+			boardVo.setOrderNo(orderNo+1);
+			boardVo.setDepth(depth+1);
+		}
+		
+		return boardDao.insert(boardVo)==1;
+	}
+	
+	public boolean updateMessage(BoardVo boardVo) {
+		return boardDao.update(boardVo)==1;
+	}
+	
+	public Map<String, Object> getMessageList( int currentPage, String keyword ){
 		
 		//1. 페이징을 위한 기본 데이터 계산
 		int totalCount = boardDao.getTotalCount( keyword ); 
@@ -62,5 +90,4 @@ public class BoardService {
 		
 		return map;
 	}
-
 }

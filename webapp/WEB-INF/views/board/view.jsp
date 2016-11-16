@@ -6,15 +6,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>mysite</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<link href="${pageContext.request.contextPath }/assets/css/board.css" rel="stylesheet" type="text/css">
+	<title>mysite</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link href="${pageContext.request.contextPath }/assets/css/board.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div id="container">
 		<c:import url="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
 			<div id="board" class="board-form">
+				
 				<table class="tbl-ex">
 					<tr>
 						<th colspan="2">글보기</th>
@@ -32,15 +33,17 @@
 						</td>
 					</tr>
 				</table>
+				
 				<div class="bottom">
 					<a href="${pageContext.request.contextPath }/board?p=${page }&kwd=${keyword }">글목록</a>
 					<c:if test="${ not empty authUser }">
-						<a href="${pageContext.request.contextPath }/board?a=replyform&no=${boardVo.no }&kwd=${keyword }">답글 달기</a>
+						<a href="${pageContext.request.contextPath }/board/reply?no=${boardVo.no }&p=${page }&kwd=${keyword }">답글 달기</a>
 						<c:if test="${authUser.no == boardVo.userNo }">
-							<a href="${pageContext.request.contextPath }/board?a=modifyform&no=${boardVo.no }&kwd=${keyword }">글수정</a>
+							<a href="${pageContext.request.contextPath }/board/modify?no=${boardVo.no }&p=${page }&kwd=${keyword }">글수정</a>
 						</c:if>
 					</c:if>
 				</div>
+				
 			</div>
 		</div>
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">

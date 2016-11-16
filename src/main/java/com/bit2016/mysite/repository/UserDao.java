@@ -27,7 +27,6 @@ public class UserDao {
 		map.put("password", password);
 		
 		return sqlSession.selectOne("user.getByEmailAndPassword", map);
-		
 	}
 	
 	// 이메일 체크

@@ -25,7 +25,7 @@ public class BoardController {
 						@RequestParam( value="kwd", required=true, defaultValue="") String keyword,
 						Model model ) {
 		
-		Map<String, Object> map = boardService.getList( page, keyword );
+		Map<String, Object> map = boardService.getMessageList(page, keyword);
 		
 		model.addAttribute( "map", map );
 		return "board/index";
@@ -46,7 +46,7 @@ public class BoardController {
 		}
 			
 		vo.setUserNo( authUser.getNo() );
-		boardService.write( vo );
+		boardService.writeMessage(vo);
 		return "redirect:/board";
 	}
 	
