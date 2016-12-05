@@ -69,26 +69,24 @@
 			<bean class="com.bit2016.mysite.interceptor.MyInterceptor2" />
 		</mvc:interceptor>
 		 -->
-
-	<mvc:interceptor>
-		<mvc:mapping path="/user/login" />
-		<bean class="com.bit2016.security.AuthLoginInterceptor" />
-	</mvc:interceptor>
-
-	<mvc:interceptor>
-		<mvc:mapping path="/user/logout" />
-		<bean class="com.bit2016.security.AuthLogoutInterceptor" />
-	</mvc:interceptor>
-
-
-	<mvc:interceptor>
-		<mvc:mapping path="/**" />
-		<mvc:exclude-mapping path="/user/login" />
-		<mvc:exclude-mapping path="/user/logout" />
-		<mvc:exclude-mapping path="/assets/**" />
-		<bean class="com.bit2016.security.AuthInterceptor" />
-	</mvc:interceptor>
- 
+	
+		<mvc:interceptor>
+			<mvc:mapping path="/user/login" />
+			<bean class="com.bit2016.security.AuthLoginInterceptor" />
+		</mvc:interceptor>
+	
+		<mvc:interceptor>
+			<mvc:mapping path="/user/logout" />
+			<bean class="com.bit2016.security.AuthLogoutInterceptor" />
+		</mvc:interceptor>
+	
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/user/login" />
+			<mvc:exclude-mapping path="/user/logout" />
+			<mvc:exclude-mapping path="/assets/**" />
+			<bean class="com.bit2016.security.AuthInterceptor" />
+		</mvc:interceptor>
 		
 	</mvc:interceptors>
 	

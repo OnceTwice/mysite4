@@ -74,6 +74,4 @@ public class UserController {
 		return "error/500";
 	}
 	*/
-	
-	
 }
